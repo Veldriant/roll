@@ -1,6 +1,6 @@
 function promiseAfterTimeout(seconds) {
     return new Promise(function (resolve) {
-      setTimeout(() => resolve(), seconds*1000);
+      setTimeout(() => resolve(), seconds*1100);
     });
   }
   
@@ -11,8 +11,8 @@ function promiseAfterTimeout(seconds) {
   }
   
   function randomDegrees() {
-    let randomFloat = Math.random()*360;
-    let descreetDegrees = Math.round(randomFloat / 36) * 36;
+    let randomFloat = Math.random()*4720;
+    let descreetDegrees = Math.round(randomFloat / 72) * 72;
     return descreetDegrees;
   }
   
@@ -22,6 +22,7 @@ function promiseAfterTimeout(seconds) {
     let segmentShift = segmentCount % numbers.length;
     
     return numbers[segmentShift];
+    
   }
   
   function launchSpin() {
@@ -29,9 +30,21 @@ function promiseAfterTimeout(seconds) {
     
     rotateWheel(currentRotation)
       .then(() => {
-        let winColor = getCurrentColor(currentRotation);
+        let winNumber = getCurrentColor(currentRotation);
         let result = document.querySelector('.result');
-        result.innerHTML = `${winColor}`;
+        let title = document.querySelector('.title');
+        let modal = document.querySelector('.modal')
+        let remove = document.querySelector('.remove')
+        modal.classList.add('active')
+        remove.addEventListener('click', function () {
+            modal.classList.remove('active')
+          })
+          if (winNumber == 0) {
+            title.innerHTML = 'Ничего,повезет в следующий раз';
+          } else {
+            title.innerHTML = 'Поздравляем вы выиграли';
+          }
+        result.innerHTML = `+${winNumber}`;
       });
   }
   
@@ -41,23 +54,4 @@ function promiseAfterTimeout(seconds) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-// const button = document.querySelector('.button')
-// const wheel = document.querySelector('.wheel')
-
-// button.addEventListener('click', function () {
-//     console.log('click');
-//     let random = 360
-//     wheel.setAttribute(`style`, `transform: rotate(${random}deg);`)
-// })
+  let remove = document.querySelector('.remove')
