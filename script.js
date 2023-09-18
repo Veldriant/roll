@@ -41,8 +41,10 @@ function promiseAfterTimeout(seconds) {
           })
           if (winNumber == 0) {
             title.innerHTML = 'Ничего,повезет в следующий раз';
+            remove.innerHTML = 'Эх,ну ладно!';
           } else {
             title.innerHTML = 'Поздравляем вы выиграли';
+            remove.innerHTML = 'Ура,спасибо!';
           }
         result.innerHTML = `+${winNumber}`;
       });
