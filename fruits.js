@@ -6,9 +6,6 @@ const life2 = document.getElementById("life2");
 const life3 = document.getElementById("life3");
 const gameOverDisplay = document.getElementById("game-over");
 const finalScoreDisplay = document.getElementById("final-score");
-const pauseOverlay = document.getElementById("pause-overlay");
-const resumeButton = document.getElementById("resume-button");
-const countdownDisplay = document.getElementById("countdown");
 
 const fruitTypes = [
     { name: "skovoroda.svg", isGood: true, width: 50, height: 50 },
@@ -22,10 +19,9 @@ const basketHeight = 40;
 let score = 0;
 let lives = 3;
 let gameInterval;
-let countdownTimer;
 let isGameOver = false;
-let isPaused = false;
-let isResuming = false; // Флаг для отслеживания продолжения игры после паузы
+let isGameStarted = true; // Начало игры
+let isWindowBlurred = false; // Фокус у страницы
 
 function updateScore() {
     scoreDisplay.textContent = "Счет: " + score;
@@ -39,65 +35,22 @@ function updateLives() {
 
 function gameOver() {
     isGameOver = true;
-    finalScoreDisplay.textContent = score; // Показываем счет после окончания игры
+    finalScoreDisplay.textContent = score;
     gameOverDisplay.style.display = "block";
     clearInterval(gameInterval);
-    clearInterval(countdownTimer);
-    document.removeEventListener("mousemove", moveBasket); // Удаляем обработчик событий после завершения игры
 
-    // Удаляем все фрукты из контейнера
     const fruits = document.querySelectorAll(".fruit");
     fruits.forEach(fruit => {
         gameContainer.removeChild(fruit);
     });
 
     if (lives <= 0) {
-        finalScoreDisplay.textContent =  score;
+        finalScoreDisplay.textContent = score;
     }
 }
-
-
-function pauseGame() {
-    isPaused = true;
-    clearInterval(gameInterval);
-
-    // Отображаем окно паузы
-    pauseOverlay.style.display = "flex";
-
-    let countdown = 3; // Обратный отсчет перед продолжением игры
-
-    countdownDisplay.style.display = "block";
-    countdownDisplay.textContent = countdown;
-
-    countdownTimer = setInterval(() => {
-        countdown--;
-        countdownDisplay.textContent = countdown;
-        if (countdown === 0) {
-            clearInterval(countdownTimer);
-            countdownDisplay.style.display = "none";
-            resumeButton.focus(); // Установка фокуса на кнопку "Продолжить"
-        }
-    }, 1000);
-}
-
-function resumeGame() {
-    if (isPaused) {
-        pauseOverlay.style.display = "none";
-        isPaused = false;
-        if (!isResuming) {
-            // Если игра не в процессе возобновления, запустить игровой интервал
-            gameInterval = setInterval(createFruit, 1500);
-            document.addEventListener("mousemove", moveBasket);
-        }
-        isResuming = false;
-    }
-}
-
-updateScore();
-updateLives();
 
 function moveBasket(event) {
-    if (isGameOver || isPaused) return; // Если игра окончена или на паузе, не перемещать корзину
+    if (isGameOver || !isGameStarted) return;
 
     const x = event.clientX;
     const containerLeft = gameContainer.getBoundingClientRect().left;
@@ -105,7 +58,7 @@ function moveBasket(event) {
 }
 
 function createFruit() {
-    if (isGameOver || isPaused) return; // Если игра окончена или на паузе, не создавать новые фрукты
+    if (isGameOver || !isGameStarted) return;
 
     const fruitImage = document.createElement("img");
     const randomFruitTypeIndex = Math.floor(Math.random() * fruitTypes.length);
@@ -121,6 +74,7 @@ function createFruit() {
     gameContainer.appendChild(fruitImage);
 
     const fallInterval = setInterval(() => {
+        if (isWindowBlurred) return;
         const top = fruitImage.offsetTop;
         if (top >= gameContainer.clientHeight) {
             clearInterval(fallInterval);
@@ -157,12 +111,24 @@ function createFruit() {
     }, 10);
 }
 
-resumeButton.addEventListener("click", () => {
-    if (isPaused) {
-        isResuming = true;
-        resumeGame();
+// Обработчик события ухода фокуса со страницы
+window.addEventListener("blur", () => {
+    isWindowBlurred = true;
+    if (!isGameOver && isGameStarted) {
+        clearInterval(gameInterval);
     }
 });
+
+// Обработчик события возврата фокуса на страницу
+window.addEventListener("focus", () => {
+    if (isWindowBlurred && isGameStarted) {
+        isWindowBlurred = false;
+        gameInterval = setInterval(createFruit, 1500);
+    }
+});
+
+updateScore();
+updateLives();
 
 gameInterval = setInterval(createFruit, 1500);
 document.addEventListener("mousemove", moveBasket);
