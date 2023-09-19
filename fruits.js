@@ -165,3 +165,4 @@ updateLives();
 
 gameInterval = setInterval(createFruit, 1500);
 document.addEventListener("mousemove", moveBasket);
+  
