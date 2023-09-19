@@ -26,6 +26,26 @@ let isWindowBlurred = false; // Фокус у страницы
 
 let prevX = 0;
 
+
+
+
+// Обработчик события ухода фокуса со страницы
+window.addEventListener("blur", () => {
+    isWindowBlurred = true;
+    if (!isGameOver && isGameStarted) {
+        clearInterval(gameInterval);
+    }
+});
+
+// Обработчик события возврата фокуса на страницу
+window.addEventListener("focus", () => {
+    if (isWindowBlurred && isGameStarted) {
+        isWindowBlurred = false;
+        gameInterval = setInterval(createFruit, 1500);
+    }
+});
+
+
 document.addEventListener("mousemove", (event) => {
   const currentX = event.clientX;
 
@@ -138,21 +158,7 @@ function createFruit() {
     }, 10);
 }
 
-// Обработчик события ухода фокуса со страницы
-window.addEventListener("blur", () => {
-    isWindowBlurred = true;
-    if (!isGameOver && isGameStarted) {
-        clearInterval(gameInterval);
-    }
-});
 
-// Обработчик события возврата фокуса на страницу
-window.addEventListener("focus", () => {
-    if (isWindowBlurred && isGameStarted) {
-        isWindowBlurred = false;
-        gameInterval = setInterval(createFruit, 1500);
-    }
-});
 
 updateScore();
 updateLives();
