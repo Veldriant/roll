@@ -44,6 +44,6 @@ function createFruit() {
     }, 10);
 }
 
-setInterval(createFruit, 1500); // Создаем новый фрукт каждую секунду
+setInterval(createFruit, 1500); 
 
 document.addEventListener("mousemove", moveBasket);
