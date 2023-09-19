@@ -62,7 +62,6 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    transform: scale(0); /* Начальное значение масштаба для анимации */
 }
 
 
