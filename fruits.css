@@ -22,9 +22,8 @@ body {
 
 .fruit {
     position: absolute;
-    width: 30px;
-    height: 30px;
-    background-color: #f00;
+    width: 40px;
+    height: 40px;
 }
 
 .score {
@@ -42,6 +41,11 @@ body {
     left: 10px;
     display: flex;
 }
+.life {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+}
 
 .lives img {
     width: 20px;
@@ -54,7 +58,7 @@ body {
     content: '';
     width: 20px;
     height: auto;
-    background-image: url('lost_life.png');
+    background-image: url('lost-life.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -81,14 +85,32 @@ body {
     font-size: 24px;
 }
 
-@keyframes heartChange {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.2);
-    }
-    100% {
-        transform: scale(1);
-    }
+.pause-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.pause-modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.pause-modal h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.countdown {
+    font-size: 36px;
+    display: none;
 }

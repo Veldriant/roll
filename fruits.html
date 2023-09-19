@@ -7,17 +7,23 @@
 <body>
     <div class="game-container">
         <div id="basket" class="basket"></div>
-        <div class="fruit"></div>
     </div>
     <div id="score" class="score">Счет: 0</div>
     <div id="lives" class="lives">
-        <img src="heart.png" alt="Жизнь">
-        <img src="heart.png" alt="Жизнь">
-        <img src="heart.png" alt="Жизнь">
+        <img id="life1" src="life.svg" alt="Жизнь" class="life">
+        <img id="life2" src="life.svg" alt="Жизнь" class="life">
+        <img id="life3" src="life.svg" alt="Жизнь" class="life">
     </div>
     <div id="game-over" class="game-over">
         <h1>Игра окончена</h1>
         <p>Ваш счет: <span id="final-score">0</span></p>
+    </div>
+    <div id="pause-overlay" class="pause-overlay">
+        <div class="pause-modal">
+            <h2>Пауза</h2>
+            <button id="resume-button">Продолжить</button>
+            <div id="countdown" class="countdown"></div>
+        </div>
     </div>
     <script src="fruits.js"></script>
 </body>
