@@ -23,6 +23,33 @@ let isGameOver = false;
 let isGameStarted = true; // Начало игры
 let isWindowBlurred = false; // Фокус у страницы
 
+
+let prevX = 0;
+
+document.addEventListener("mousemove", (event) => {
+  const currentX = event.clientX;
+
+  if (currentX > prevX) {
+    // Мышь движется вправо
+    basket.style.backgroundImage = "url(./right.svg)";
+  } else if (currentX < prevX) {
+    // Мышь движется влево
+    basket.style.backgroundImage = "url(./left.svg)";
+  }
+
+  prevX = currentX;
+});
+
+
+
+
+
+
+
+
+
+
+
 function updateScore() {
     scoreDisplay.textContent = "Счет: " + score;
 }
