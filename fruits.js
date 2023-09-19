@@ -1,9 +1,7 @@
 const basket = document.getElementById("basket");
 const gameContainer = document.querySelector(".game-container");
 const scoreDisplay = document.getElementById("score");
-const life1 = document.getElementById("life1");
-const life2 = document.getElementById("life2");
-const life3 = document.getElementById("life3");
+const lifeElements = [document.getElementById("life1"), document.getElementById("life2"), document.getElementById("life3")];
 const gameOverDisplay = document.getElementById("game-over");
 const finalScoreDisplay = document.getElementById("final-score");
 
@@ -20,64 +18,45 @@ let score = 0;
 let lives = 3;
 let gameInterval;
 let isGameOver = false;
-let isGameStarted = true; // Начало игры
-let isWindowBlurred = false; // Фокус у страницы
+let isGameStarted = true;
+let isWindowBlurred = false;
 
+const basketSpeed = 10;
+let basketPositionX = gameContainer.clientWidth / 2 - basketWidth / 2;
 
-let prevX = 0;
+let leftPressed = false;
+let rightPressed = false;
 
+function moveBasket() {
+    if (isGameOver || !isGameStarted) return;
 
-
-
-// Обработчик события ухода фокуса со страницы
-window.addEventListener("blur", () => {
-    isWindowBlurred = true;
-    if (!isGameOver && isGameStarted) {
-        clearInterval(gameInterval);
+    if (leftPressed && basketPositionX > 0) {
+        basketPositionX -= basketSpeed;
+        basket.style.backgroundImage = "url(./left.svg)";
+        basket.style.left = basketPositionX + "px";
+        requestAnimationFrame(moveBasket);
+    } else if (rightPressed && basketPositionX + basketWidth < gameContainer.clientWidth) {
+        basketPositionX += basketSpeed;
+        basket.style.backgroundImage = "url(./right.svg)";
+        basket.style.left = basketPositionX + "px";
+        requestAnimationFrame(moveBasket);
     }
-});
+}
 
-// Обработчик события возврата фокуса на страницу
-window.addEventListener("focus", () => {
-    if (isWindowBlurred && isGameStarted) {
-        isWindowBlurred = false;
-        gameInterval = setInterval(createFruit, 1500);
+function stopBasket() {
+    if (!leftPressed && !rightPressed) {
+        basket.style.backgroundImage = "url(./left.svg)";
     }
-});
-
-
-document.addEventListener("mousemove", (event) => {
-  const currentX = event.clientX;
-
-  if (currentX > prevX) {
-    // Мышь движется вправо
-    basket.style.backgroundImage = "url(./right.svg)";
-  } else if (currentX < prevX) {
-    // Мышь движется влево
-    basket.style.backgroundImage = "url(./left.svg)";
-  }
-
-  prevX = currentX;
-});
-
-
-
-
-
-
-
-
-
-
+}
 
 function updateScore() {
     scoreDisplay.textContent = "Счет: " + score;
 }
 
 function updateLives() {
-    life1.src = lives >= 1 ? "life.svg" : "lost-life.svg";
-    life2.src = lives >= 2 ? "life.svg" : "lost-life.svg";
-    life3.src = lives >= 3 ? "life.svg" : "lost-life.svg";
+    for (let i = 0; i < 3; i++) {
+        lifeElements[i].src = lives > i ? "life.svg" : "lost-life.svg";
+    }
 }
 
 function gameOver() {
@@ -85,27 +64,14 @@ function gameOver() {
     finalScoreDisplay.textContent = score;
     gameOverDisplay.style.display = "block";
     clearInterval(gameInterval);
-
-    const fruits = document.querySelectorAll(".fruit");
-    fruits.forEach(fruit => {
-        gameContainer.removeChild(fruit);
-    });
-
+    document.querySelectorAll(".fruit").forEach(fruit => gameContainer.removeChild(fruit));
     if (lives <= 0) {
         finalScoreDisplay.textContent = score;
     }
 }
 
-function moveBasket(event) {
-    if (isGameOver || !isGameStarted) return;
-
-    const x = event.clientX;
-    const containerLeft = gameContainer.getBoundingClientRect().left;
-    basket.style.left = x - containerLeft - basketWidth / 2 + "px";
-}
-
 function createFruit() {
-    if (isGameOver || !isGameStarted) return;
+    if (isGameOver || !isGameStarted || isWindowBlurred) return;
 
     const fruitImage = document.createElement("img");
     const randomFruitTypeIndex = Math.floor(Math.random() * fruitTypes.length);
@@ -158,11 +124,44 @@ function createFruit() {
     }, 10);
 }
 
-
-
 updateScore();
 updateLives();
 
 gameInterval = setInterval(createFruit, 1500);
-document.addEventListener("mousemove", moveBasket);
-  
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft" && !rightPressed) {
+        leftPressed = true;
+        rightPressed = false;
+        moveBasket();
+    } else if (event.key === "ArrowRight" && !leftPressed) {
+        rightPressed = true;
+        leftPressed = false;
+        moveBasket();
+    }
+});
+
+document.addEventListener("keyup", (event) => {
+    if (event.key === "ArrowLeft") {
+        leftPressed = false;
+        stopBasket();
+    } else if (event.key === "ArrowRight") {
+        rightPressed = false;
+        stopBasket();
+    }
+});
+
+window.addEventListener("blur", () => {
+    isWindowBlurred = true;
+    if (!isGameOver && isGameStarted) {
+        clearInterval(gameInterval);
+    }
+});
+
+window.addEventListener("focus", () => {
+    if (isWindowBlurred && isGameStarted) {
+        isWindowBlurred = false;
+        gameInterval = setInterval(createFruit, 1500);
+    }
+});
+
